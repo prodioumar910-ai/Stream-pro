@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamView - Interface Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --brand: #00BFFF;
+            --bg: #050505;
+            --text: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card: #121212;
+            --nav: rgba(15, 15, 15, 0.7);
+        }
+
+        .light-mode {
+            --bg: #E5E7EB;
+            --text: #1F2937;
+            --glass: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --card: #F3F4F6;
+            --nav: rgba(229, 231, 235, 0.9);
+        }
+
+        body { 
+            background-color: var(--bg);
+            color: var(--text); 
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(0, 191, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(0, 191, 255, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .text-main { color: var(--text); }
+        .bg-card { background-color: var(--card); }
+        .border-main { border-color: var(--glass-border); }
+
+        .font-plus { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 15px 4px rgba(0, 191, 255, 0.6); transform: scale(1.05); }
+        }
+
+        .animate-stitch {
+            animation: fadeInSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .floating-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 420px;
+            height: 64px;
+            background: var(--nav);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .video-card {
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--brand);
+            box-shadow: 0 15px 30px rgba(0, 191, 255, 0.15);
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, var(--brand) 0%, #0080FF 100%);
+            box-shadow: 0 10px 20px rgba(0, 191, 255, 0.3);
+            border: none;
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+        
+        /* Animations fluides personnalisées */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes popIcon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: popIcon 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        brand: '#00BFFF',
+                        brandDark: '#008CBA',
+                        dark: '#0A0A0A',
+                        cardBg: '#121212',
+                        grayText: '#888888',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="pb-[110px] selection:bg-brand/30">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Header Premium -->
+    <header class="fixed top-0 w-full z-50 flex justify-between items-center h-16 px-5 bg-opacity-80 backdrop-blur-md border-b border-white/5 transition-all" style="background-color: var(--bg);">
+        <button class="text-[#00BFFF] hover:opacity-80 active:scale-90 transition-transform">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <span class="font-plus font-extrabold text-xl tracking-tighter text-[#00BFFF]">StreamView</span>
+
+        <div class="flex items-center gap-3">
+            <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-brand/10 transition-colors">
+                <span id="theme-icon" class="material-symbols-outlined text-brand">dark_mode</span>
+            </button>
+            <button onclick="switchTab('tab-profil', this)" class="w-8 h-8 rounded-full overflow-hidden border border-brand/20 active:scale-90 transition-transform bg-brand/10 flex items-center justify-center">
+                <img id="header-avatar" alt="User" class="w-full h-full object-cover hidden" src="">
+                <span id="header-avatar-icon" class="material-symbols-outlined text-brand text-[24px]">account_circle</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== VUE 1 : DÉCOUVRIR (ACCUEIL) ==================== -->
+    <div id="tab-decouvrir" class="tab-content block pb-32 pt-20">
+        <!-- Section 1 : Épisodes de tendance (Horizontal) -->
+        <section class="mb-10 animate-stitch">
+            <div class="px-6 mb-5 flex justify-between items-end">
+                <h2 class="font-plus text-xl font-extrabold text-main tracking-tight">Épisodes de tendance</h2>
+                <span class="material-symbols-outlined text-brand text-sm">arrow_forward_ios</span>
+            </div>
+            <div id="episodes-trending-container" class="px-6 flex gap-4 overflow-x-auto pb-6 hide-scrollbar snap-x scroll-smooth min-h-[100px]">
+                <p class="text-[11px] text-gray-600 italic">Chargement des épisodes...</p>
+            </div>
+        </section>
+
+        <!-- Section 2 : Séries en tendance (Gros format horizontal) -->
+        <section class="px-6 mb-12 animate-stitch" style="animation-delay: 0.2s">
+            <h2 class="font-plus text-xl font-extrabold text-main mb-6">Séries en tendance</h2>
+            <div id="series-trending-container" class="flex gap-5 overflow-x-auto pb-6 hide-scrollbar snap-x scroll-smooth min-h-[150px]">
+                <p class="text-[11px] text-gray-600 italic">Recherche de séries...</p>
+            </div>
+        </section>
+
+        <!-- Section 3 : Films pour vous (Liste Verticale) -->
+        <section class="px-6 mb-12 animate-stitch" style="animation-delay: 0.4s">
+            <h2 class="font-plus text-xl font-extrabold text-main mb-6">Films pour vous</h2>
+            <div id="films-container" class="flex flex-col gap-4">
+                <!-- Les films en format liste s'afficheront ici -->
+            </div>
+        </section>
+    </div>
+
+
+    <!-- ==================== VUE 2 : RECHERCHE (BROWSE) ==================== -->
+    <div id="tab-rechercher" class="tab-content hidden pb-32 pt-20">
+        <div class="px-6 py-4">
+            <!-- Barre de Recherche -->
+            <div class="relative mb-6">
+                <input type="text" placeholder="Rechercher films, séries, docs..." class="w-full bg-transparent text-main rounded-full py-3.5 pl-12 pr-12 text-[15px] border-2 border-[#00BFFF] outline-none shadow-[0_0_15px_rgba(0,191,255,0.2)]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-main/60">search</span>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#00BFFF]">mic</span>
+            </div>
+
+            <!-- Sélection Région & Filtres -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-plus text-xl font-extrabold text-main">Région</h2>
+                <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-[#00BFFF] bg-white/5 text-[13px] font-bold">
+                    <span id="region-flag" class="w-5 h-3 bg-white/10 rounded-sm relative overflow-hidden flex items-center justify-center text-[8px]">🌍</span>
+                    <span id="region-text">Détection...</span>
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+                </button>
+            </div>
+
+            <!-- Filtres Pilules -->
+            <div class="flex gap-3 overflow-x-auto pb-4 hide-scrollbar mb-8">
+                <button class="px-6 py-2.5 rounded-full bg-[#00BFFF] text-black font-extrabold text-[13px] whitespace-nowrap">Tout</button>
+                <button class="px-6 py-2.5 rounded-full border border-[#00BFFF] text-main font-bold text-[13px] whitespace-nowrap bg-white/5">Nollywood</button>
+                <button class="px-6 py-2.5 rounded-full border border-[#00BFFF] text-main font-bold text-[13px] whitespace-nowrap bg-white/5">Afrobeat Docs</button>
+            </div>
+
+
+
+            <!-- Parcourir par Genre -->
+            <h2 class="font-plus text-lg font-extrabold text-main mb-6">Parcourir par Genre</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <button class="video-card flex flex-col items-center justify-center gap-3 py-6 border border-[#00BFFF]/30 hover:bg-[#00BFFF]/5 transition-all">
+                    <i data-lucide="clapperboard" class="w-7 h-7 text-[#00BFFF]"></i>
+                    <span class="text-main font-bold text-sm">Cinéma</span>
+                </button>
+                <button class="video-card flex flex-col items-center justify-center gap-3 py-6 border border-[#00BFFF]/30 hover:bg-[#00BFFF]/5 transition-all">
+                    <i data-lucide="tv" class="w-7 h-7 text-[#00BFFF]"></i>
+                    <span class="text-main font-bold text-sm">Séries</span>
+                </button>
+                <button class="video-card flex flex-col items-center justify-center gap-3 py-6 border border-[#00BFFF]/30 hover:bg-[#00BFFF]/5 transition-all">
+                    <i data-lucide="laugh" class="w-7 h-7 text-[#00BFFF]"></i>
+                    <span class="text-main font-bold text-sm">Comédie</span>
+                </button>
+                <button class="video-card flex flex-col items-center justify-center gap-3 py-6 border border-[#00BFFF]/30 hover:bg-[#00BFFF]/5 transition-all">
+                    <i data-lucide="heart" class="w-7 h-7 text-[#00BFFF]"></i>
+                    <span class="text-main font-bold text-sm">Romantique</span>
+                </button>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- ==================== VUE 3 : TÉLÉCHARGEMENTS ==================== -->
+    <div id="tab-bibliotheque" class="tab-content hidden pb-32 pt-20">
+        <div class="px-6">
+            <h2 class="font-plus text-2xl font-extrabold text-main mb-6">Mes Téléchargements</h2>
+            <div id="downloads-container" class="flex flex-col gap-4">
+                <div class="flex flex-col items-center justify-center py-20 text-center opacity-50">
+                    <span class="material-symbols-outlined text-6xl mb-4">cloud_download</span>
+                    <p class="text-sm">Aucun téléchargement pour le moment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- ==================== VUE 4 : PROFIL ==================== -->
+    <div id="tab-profil" class="tab-content hidden">
+        <div class="px-5 py-6">
+            <h2 class="text-2xl font-bold text-main mb-8">Mon Profil</h2>
+            
+            <!-- Avatar Edit -->
+            <div class="flex flex-col items-center mb-10">
+                <input type="file" id="avatar-input" class="hidden" accept="image/*" onchange="previewAvatar(this)">
+                <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-input').click()">
+                    <div class="w-24 h-24 rounded-full border-2 border-brand p-1 bg-brand/5 flex items-center justify-center overflow-hidden">
+                        <img id="profile-avatar-img" src="" alt="Avatar" class="w-full h-full object-cover rounded-full hidden">
+                        <span id="profile-avatar-icon" class="material-symbols-outlined text-brand text-[64px]">account_circle</span>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+                    </div>
+                </div>
+                <p id="display-name" class="text-lg font-bold mt-4">Utilisateur</p>
+                <p class="text-[10px] text-brand font-bold uppercase tracking-widest">Nouveau Membre</p>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="flex flex-col gap-6">
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold text-grayText uppercase tracking-wider">Nom Complet</label>
+                    <input type="text" id="input-full-name" placeholder="Votre nom" class="bg-card border border-gray-800 rounded-xl px-4 py-3 text-main focus:ring-2 focus:ring-brand outline-none transition-all">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold text-grayText uppercase tracking-wider">Adresse Email</label>
+                    <input type="email" id="input-email" placeholder="votre@email.com" class="bg-card border border-gray-800 rounded-xl px-4 py-3 text-main focus:ring-2 focus:ring-brand outline-none transition-all">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold text-grayText uppercase tracking-wider">Bio / Description</label>
+                    <textarea id="input-bio" placeholder="Parlez-nous de vous..." class="bg-card border border-gray-800 rounded-xl px-4 py-3 text-main focus:ring-2 focus:ring-brand outline-none transition-all h-24 resize-none"></textarea>
+                </div>
+
+                <button onclick="saveProfile()" class="w-full bg-brand text-black font-bold py-4 rounded-xl mt-4 shadow-[0_0_20px_rgba(0,191,255,0.3)] hover:scale-[1.02] active:scale-100 transition-all">
+                    Enregistrer les modifications
+                </button>
+
+                <!-- Bouton Admin (Affiché uniquement si isAdmin = true dans la base de données) -->
+                <div id="admin-only-section" class="hidden">
+                    <a href="admin.html" class="w-full bg-white/5 border border-brand/30 text-brand font-bold py-4 rounded-xl mt-2 text-center hover:bg-brand/10 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i> Espace Administrateur
+                    </a>
+                </div>
+
+                <a href="index.html" class="w-full border border-red-500/30 text-red-500 font-bold py-4 rounded-xl mt-2 text-center hover:bg-red-500/5 transition-all">
+                    Se déconnecter
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== NAVIGATION FIXE ==================== -->
+
+    <!-- Navigation Flottante Premium (Traduction Française) -->
+    <nav class="floating-nav">
+        <button id="nav-decouvrir" onclick="switchTab('tab-decouvrir', this)" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand outline-none transition-all duration-300 w-16">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="font-plus text-[9px] font-bold uppercase tracking-widest">Accueil</span>
+        </button>
+        <button id="nav-rechercher" onclick="switchTab('tab-rechercher', this)" class="nav-btn flex flex-col items-center justify-center gap-1 text-main/40 hover:text-main transition-all duration-300 w-16">
+            <span class="material-symbols-outlined">search</span>
+            <span class="font-plus text-[9px] font-bold uppercase tracking-widest">Découvrir</span>
+        </button>
+        <button id="nav-downloads" onclick="switchTab('tab-bibliotheque', this)" class="nav-btn flex flex-col items-center justify-center gap-1 text-main/40 hover:text-main transition-all duration-300 w-16">
+            <span class="material-symbols-outlined">download</span>
+            <span class="font-plus text-[9px] font-bold uppercase tracking-widest">Téléch.</span>
+        </button>
+        <button id="nav-profil" onclick="switchTab('tab-profil', this)" class="nav-btn flex flex-col items-center justify-center gap-1 text-main/40 hover:text-main transition-all duration-300 w-16">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-plus text-[9px] font-bold uppercase tracking-widest">Profil</span>
+        </button>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+
+        // Système de notification (Toast)
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-card border border-brand/50 text-main px-5 py-2.5 rounded-full shadow-[0_5px_20px_rgba(0,191,255,0.2)] text-[13px] font-bold transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-2 backdrop-blur-md';
+            toast.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-brand"></i> ${message}`;
+            
+            container.appendChild(toast);
+            lucide.createIcons(); 
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+            });
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'scale-95', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // Système de navigation avec Animations Fluides
+        function switchTab(tabId, btnElement) {
+            if(document.getElementById(tabId).classList.contains('block')) return;
+
+            // 1. Cacher toutes les vues
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block', 'animate-fade-in');
+            });
+            
+            // 2. Afficher la nouvelle vue
+            const activeTab = document.getElementById(tabId);
+            activeTab.classList.remove('hidden');
+            activeTab.classList.add('block');
+            
+            void activeTab.offsetWidth;
+            activeTab.classList.add('animate-fade-in');
+            
+            // 3. Reset du style des boutons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-brand');
+                btn.classList.add('text-gray-500');
+            });
+
+            // 4. Activer le bouton cliqué
+            if(btnElement) {
+                btnElement.classList.remove('text-gray-500');
+                btnElement.classList.add('text-brand');
+                
+                // Petit effet de vibration tactile (si supporté)
+                if (window.navigator.vibrate) window.navigator.vibrate(5);
+            }
+        }
+        // --- Synchronisation LocalStorage ---
+        
+        let currentAvatarData = null; // Stockage temporaire de l'image choisie
+
+        function loadAppData() {
+            const user = JSON.parse(localStorage.getItem('streamview_user'));
+            
+            // Mise à jour de la Région
+            const regionText = document.getElementById('region-text');
+            const regionFlag = document.getElementById('region-flag');
+            if (user && user.country) {
+                if (regionText) regionText.innerText = user.country;
+                if (regionFlag) {
+                    const flags = {
+                        'Sénégal': '🇸🇳', 'Mali': '🇲🇱', 'Côte d\'Ivoire': '🇨🇮', 'Guinée': '🇬🇳', 
+                        'Nigéria': '🇳🇬', 'Ghana': '🇬🇭', 'Burkina Faso': '🇧🇫', 'Bénin': '🇧🇯',
+                        'Togo': '🇹🇬', 'Niger': '🇳🇪', 'Libéria': '🇱🇷', 'Sierra Leone': '🇸🇱',
+                        'Gambie': '🇬🇲', 'Cap-Vert': '🇨🇻', 'Guinée-Bissau': '🇬🇼'
+                    };
+                    regionFlag.innerText = flags[user.country] || '🌍';
+                }
+            }
+
+            if (user) {
+                document.getElementById('display-name').innerText = user.name || "Utilisateur";
+                document.getElementById('input-full-name').value = user.name || "";
+                document.getElementById('input-email').value = user.email || "";
+                if (user.avatar) {
+                    document.getElementById('profile-avatar-img').src = user.avatar;
+                    document.getElementById('header-avatar').src = user.avatar;
+                    document.getElementById('profile-avatar-img').classList.remove('hidden');
+                    document.getElementById('header-avatar').classList.remove('hidden');
+                    document.getElementById('profile-avatar-icon').classList.add('hidden');
+                    document.getElementById('header-avatar-icon').classList.add('hidden');
+                    currentAvatarData = user.avatar;
+                }
+            }
+
+            const customVideos = JSON.parse(localStorage.getItem('streamview_videos')) || [];
+            const downloads = JSON.parse(localStorage.getItem('streamview_downloads')) || [];
+            
+            const episodesContainer = document.getElementById('episodes-trending-container');
+            const seriesContainer = document.getElementById('series-trending-container');
+            const filmsContainer = document.getElementById('films-container');
+            const downloadsContainer = document.getElementById('downloads-container');
+            
+            if (customVideos.length > 0) {
+                if (episodesContainer) episodesContainer.innerHTML = ''; 
+                if (seriesContainer) seriesContainer.innerHTML = '';
+                if (filmsContainer) filmsContainer.innerHTML = '';
+                
+                customVideos.forEach((video, index) => {
+                    // 1. ÉPISODES DE TENDANCE (mt-3 pour écarter le prix)
+                    if (episodesContainer && index < 4) {
+                        const epEl = document.createElement('div');
+                        epEl.className = "min-w-[280px] flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-all animate-stitch snap-start";
+                        epEl.style.animationDelay = `${index * 0.1}s`;
+                        epEl.innerHTML = `
+                            <div class="relative w-[80px] h-[80px] shrink-0 rounded-[18px] overflow-hidden">
+                                <img src="${video.thumb}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            </div>
+                            <div class="flex flex-col flex-1 justify-center pr-2">
+                                <h3 class="font-plus text-main text-[14px] font-bold line-clamp-1">${video.title}</h3>
+                                <p class="text-[#00BFFF] font-extrabold text-[12px] mt-3">${video.price} ${user?.currency || 'CFA'}</p>
+                            </div>
+                            <button onclick="event.stopPropagation(); downloadVideo('${video.id}', '${video.title}', '${video.thumb}')" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-main mr-1 hover:bg-[#00BFFF] hover:text-black transition-all shrink-0">
+                                <span class="material-symbols-outlined text-sm">download</span>
+                            </button>
+                        `;
+                        episodesContainer.appendChild(epEl);
+                    }
+
+                    // 2. SÉRIES EN TENDANCE (Prix au dessus du titre)
+                    if (seriesContainer && index < 4) {
+                        const seriesEl = document.createElement('div');
+                        seriesEl.className = "relative min-w-[180px] aspect-[3/4] rounded-[24px] overflow-hidden snap-start group cursor-pointer border border-white/5 shadow-lg animate-stitch transition-all duration-500 hover:scale-105";
+                        seriesEl.style.animationDelay = `${index * 0.15}s`;
+                        seriesEl.innerHTML = `
+                            <img src="${video.thumb}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#050505]/95 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                                <div>
+                                    <p class="text-[#00BFFF] font-extrabold text-[12px] uppercase tracking-wider mb-0.5">${video.price} ${user?.currency || 'CFA'}</p>
+                                    <h3 class="text-[14px] font-extrabold text-main line-clamp-1">${video.title}</h3>
+                                </div>
+                                <button onclick="event.stopPropagation(); downloadVideo('${video.id}', '${video.title}', '${video.thumb}')" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-main hover:bg-[#00BFFF] transition-all">
+                                    <span class="material-symbols-outlined text-[16px]">download</span>
+                                </button>
+                            </div>
+                        `;
+                        seriesContainer.appendChild(seriesEl);
+                    }
+
+                    // 3. FILMS POUR VOUS (Format Liste Verticale)
+                    if (filmsContainer) {
+                        const filmEl = document.createElement('div');
+                        filmEl.className = "flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-all animate-stitch";
+                        filmEl.style.animationDelay = `${index * 0.2}s`;
+                        filmEl.innerHTML = `
+                            <div class="relative w-[80px] h-[80px] shrink-0 rounded-[18px] overflow-hidden">
+                                <img src="${video.thumb}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            </div>
+                            <div class="flex flex-col flex-1 justify-center pr-2">
+                                <h3 class="font-plus text-main text-[15px] font-bold line-clamp-1">${video.title}</h3>
+                                <p class="text-[#00BFFF] font-extrabold text-[13px] mt-2">${video.price} ${user?.currency || 'CFA'}</p>
+                            </div>
+                            <button onclick="event.stopPropagation(); downloadVideo('${video.id}', '${video.title}', '${video.thumb}')" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-main mr-2 hover:bg-[#00BFFF] hover:text-black transition-all shrink-0">
+                                <span class="material-symbols-outlined text-lg">download</span>
+                            </button>
+                        `;
+                        filmsContainer.appendChild(filmEl);
+                    }
+
+
+                });
+            }
+
+            // Charger les téléchargements
+            if (downloadsContainer) {
+                if (downloads.length > 0) {
+                    downloadsContainer.innerHTML = '';
+                    downloads.forEach(dl => {
+                        const dlEl = document.createElement('div');
+                        dlEl.className = "flex items-center gap-4 p-3 rounded-2xl bg-white/5 border border-white/5 animate-stitch";
+                        dlEl.innerHTML = `
+                            <img src="${dl.thumb}" class="w-16 h-16 rounded-xl object-cover">
+                            <div class="flex-1">
+                                <h3 class="text-main font-bold text-sm">${dl.title}</h3>
+                                <p class="text-gray-500 text-[11px]">Prêt à regarder • 1.2 GB</p>
+                            </div>
+                            <button onclick="removeDownload('${dl.id}')" class="text-red-500 p-2"><span class="material-symbols-outlined">delete</span></button>
+                        `;
+                        downloadsContainer.appendChild(dlEl);
+                    });
+                }
+            }
+            lucide.createIcons();
+        }
+
+        function downloadVideo(id, title, thumb) {
+            let downloads = JSON.parse(localStorage.getItem('streamview_downloads')) || [];
+            if (downloads.find(d => d.id === id)) {
+                showToast("Déjà téléchargé !");
+                return;
+            }
+            downloads.push({ id, title, thumb });
+            localStorage.setItem('streamview_downloads', JSON.stringify(downloads));
+            showToast(`Téléchargement de ${title} lancé...`);
+            loadAppData();
+        }
+
+        function removeDownload(id) {
+            let downloads = JSON.parse(localStorage.getItem('streamview_downloads')) || [];
+            downloads = downloads.filter(d => d.id !== id);
+            localStorage.setItem('streamview_downloads', JSON.stringify(downloads));
+            showToast("Supprimé des téléchargements");
+            loadAppData();
+        }
+
+        // Lancer après un petit délai
+        setTimeout(() => {
+            loadAppData();
+            const user = JSON.parse(localStorage.getItem('streamview_user'));
+            const adminSection = document.getElementById('admin-only-section');
+            if(adminSection && user && user.email === 'prodioumar910@gmail.com') {
+                adminSection.classList.remove('hidden');
+            }
+        }, 100);
+
+        // --- Fonctions de Modification de Profil ---
+
+        function saveProfile() {
+            const newName = document.getElementById('input-full-name').value;
+            const newEmail = document.getElementById('input-email').value;
+            
+            const user = JSON.parse(localStorage.getItem('streamview_user')) || {};
+            user.name = newName;
+            user.email = newEmail;
+            if (currentAvatarData) {
+                user.avatar = currentAvatarData;
+            }
+            
+            localStorage.setItem('streamview_user', JSON.stringify(user));
+            document.getElementById('display-name').innerText = newName;
+            showToast('Profil enregistré et sauvegardé !');
+        }
+
+        // --- Fonctions MVP : Lecture et Listes ---
+
+        function playHeroVideo() {
+            const heroTitle = document.getElementById('hero-title').innerText;
+            if (heroTitle === "Bienvenue sur StreamView") {
+                showToast("Ajoutez du contenu dans l'admin d'abord !");
+            } else {
+                showToast(`Lancement de : ${heroTitle}...`);
+            }
+        }
+
+        function addToMyList(title, thumb, type = 'Favori', videoId = null) {
+            const myList = JSON.parse(localStorage.getItem('streamview_mylist')) || [];
+            if (myList.find(v => v.title === title && v.type === type)) {
+                showToast(type === 'Achat' ? "Déjà acheté !" : "Déjà dans votre liste !");
+                return;
+            }
+            myList.push({ title, thumb, type, videoId });
+            localStorage.setItem('streamview_mylist', JSON.stringify(myList));
+            
+            // Enregistrer la vente réelle si c'est un achat
+            if (type === 'Achat' && videoId) {
+                const sales = JSON.parse(localStorage.getItem('streamview_sales')) || {};
+                sales[videoId] = (sales[videoId] || 0) + 1;
+                localStorage.setItem('streamview_sales', JSON.stringify(sales));
+            }
+
+            showToast(type === 'Achat' ? `${title} acheté avec succès !` : `${title} ajouté à Ma Liste !`);
+            loadLibrary();
+        }
+
+        function loadLibrary() {
+            const myList = JSON.parse(localStorage.getItem('streamview_mylist')) || [];
+            const libContainer = document.querySelector('#tab-bibliotheque .flex-col.gap-4');
+            
+            if (myList.length > 0) {
+                libContainer.innerHTML = '';
+                myList.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = "flex items-center gap-4 bg-white/5 p-3 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group animate-fade-in";
+                    el.onclick = () => showToast(`Lecture de ${item.title}...`);
+                    el.innerHTML = `
+                        <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                            <img src="${item.thumb}" class="object-cover w-full h-full group-hover:scale-110 transition-transform">
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-white font-bold text-sm">${item.title}</h3>
+                            <p class="text-[10px] text-brand uppercase font-black mt-1">${item.type === 'Achat' ? 'Acheté' : 'Favori'}</p>
+                        </div>
+                        <button class="text-gray-500"><i data-lucide="play-circle" class="w-6 h-6"></i></button>
+                    `;
+                    libContainer.appendChild(el);
+                });
+                lucide.createIcons();
+            }
+        }
+
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    currentAvatarData = dataUrl;
+                    
+                    const pImg = document.getElementById('profile-avatar-img');
+                    const hImg = document.getElementById('header-avatar');
+                    const pIcon = document.getElementById('profile-avatar-icon');
+                    const hIcon = document.getElementById('header-avatar-icon');
+
+                    if(pImg) { pImg.src = dataUrl; pImg.classList.remove('hidden'); }
+                    if(hImg) { hImg.src = dataUrl; hImg.classList.remove('hidden'); }
+                    if(pIcon) { pIcon.classList.add('hidden'); }
+                    if(hIcon) { hIcon.classList.add('hidden'); }
+
+                    showToast('Photo choisie. Cliquez sur Enregistrer.');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Gestion du Thème
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            const isLight = body.classList.toggle('light-mode');
+            
+            icon.innerText = isLight ? 'light_mode' : 'dark_mode';
+            localStorage.setItem('streamview_theme', isLight ? 'light' : 'dark');
+            showToast(isLight ? "Mode Clair activé" : "Mode Sombre activé");
+        }
+
+        // Charger le thème au démarrage
+        (function() {
+            const savedTheme = localStorage.getItem('streamview_theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                setTimeout(() => {
+                    const icon = document.getElementById('theme-icon');
+                    if (icon) icon.innerText = 'light_mode';
+                }, 100);
+            }
+        })();
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

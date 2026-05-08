@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Connexion Supabase - StreamView</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
+        body { background-color: #050505; color: white; font-family: 'Outfit', sans-serif; }
+    </style>
+</head>
+<body class="p-8 flex items-center justify-center min-h-screen">
+    <div class="max-w-xl w-full bg-[#1A1A1A] p-10 rounded-3xl border border-gray-800 shadow-2xl">
+        <h1 class="text-3xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-4 h-4 rounded-full bg-yellow-500 animate-pulse" id="status-dot"></span>
+            Test de la Base de données
+        </h1>
+        <p class="text-gray-400 mb-8 text-sm leading-relaxed">Vérification de la connexion à ton projet Supabase <span class="text-white font-bold">"nhnvjrdamyonzuiwkscq"</span>...</p>
+
+        <div id="result" class="bg-black/50 p-6 rounded-2xl font-mono text-sm text-blue-400 min-h-[120px] border border-white/5 whitespace-pre-wrap overflow-auto">
+Initialisation de la connexion...
+        </div>
+
+        <div class="mt-8 flex flex-col gap-3">
+            <button onclick="window.location.reload()" class="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser le test
+            </button>
+            <p class="text-[10px] text-gray-600 text-center uppercase tracking-widest mt-2">StreamView Backend Test v1.1</p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+        const resultDiv = document.getElementById('result');
+        const statusDot = document.getElementById('status-dot');
+
+        async function runTest() {
+            try {
+                // CORRECTION : On utilise le constructeur global correctement
+                const supabaseUrl = 'https://nhnvjrdamyonzuiwkscq.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obnZqcmRhbXlvbnp1aXdrc2NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5ODE4MzYsImV4cCI6MjA5MjU1NzgzNn0.HWfItnZ9XhvJx-jFtLvZjNoV3ZESeoo5kxMHQxTYO6Q';
+                
+                resultDiv.innerHTML = "Tentative de connexion à Supabase...";
+                
+                // On utilise le package global chargé par le CDN
+                const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+                
+                resultDiv.innerHTML += "\nConnexion établie. Lecture de la table 'videos'...";
+                
+                // On récupère les données
+                const { data, error } = await supabaseClient
+                    .from('videos')
+                    .select('*');
+
+                if (error) throw error;
+
+                // Succès !
+                statusDot.classList.replace('bg-yellow-500', 'bg-green-500');
+                statusDot.classList.remove('animate-pulse');
+                resultDiv.style.color = "#4ade80"; // Vert
+                
+                if (data.length === 0) {
+                    resultDiv.innerHTML = "✅ SUCCÈS : Connecté à Supabase !\n\nLa table 'videos' existe bien et elle est prête.\n\nElle est actuellement vide, ce qui est normal car nous n'avons pas encore ajouté de contenu.";
+                } else {
+                    resultDiv.innerHTML = "✅ SUCCÈS : Connecté !\n\nContenu trouvé :\n" + JSON.stringify(data, null, 2);
+                }
+
+            } catch (err) {
+                // Erreur
+                statusDot.classList.replace('bg-yellow-500', 'bg-red-500');
+                statusDot.classList.remove('animate-pulse');
+                resultDiv.style.color = "#f87171"; // Rouge
+                resultDiv.innerHTML = "❌ ERREUR DE CONNEXION :\n\n" + (err.message || "Erreur inconnue");
+                console.error(err);
+            }
+        }
+
+        // Lancer après un petit délai pour être sûr que tout est chargé
+        setTimeout(runTest, 500);
+    </script>
+</body>
+</html>

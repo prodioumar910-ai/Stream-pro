@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamView Admin - Gestion de Contenu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        body { 
+            background-color: #050505;
+            color: #FFFFFF; 
+            font-family: 'Outfit', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: '#00BFFF', dark: '#0A0A0A' }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Vérification de sécurité Admin
+        (function() {
+            const user = JSON.parse(localStorage.getItem('streamview_user'));
+            if (!user || user.email !== 'prodioumar910@gmail.com') {
+                window.location.href = 'preview.html';
+            }
+        })();
+    </script>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header Admin -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white">Espace <span class="text-brand">Admin</span></h1>
+            <p class="text-gray-400 text-sm">Gestion du catalogue et des publications</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="switchAdminTab('admin-content', this)" class="admin-nav-btn bg-brand text-black font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm shadow-lg shadow-brand/20">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Contenu
+            </button>
+            <button onclick="switchAdminTab('admin-users', this)" class="admin-nav-btn bg-white/5 hover:bg-white/10 text-white font-bold py-2 px-4 rounded-xl border border-white/10 transition-all flex items-center gap-2 text-sm">
+                <i data-lucide="users" class="w-4 h-4"></i> Utilisateurs
+            </button>
+            <a href="preview.html" class="bg-white/5 hover:bg-white/10 text-white font-bold py-2 px-4 rounded-xl border border-white/10 transition-all flex items-center gap-2 text-sm">
+                <i data-lucide="eye" class="w-4 h-4"></i> Voir l'app
+            </a>
+        </div>
+    </header>
+
+    <!-- ONGLET 1 : GESTION DU CONTENU -->
+    <div id="admin-content" class="admin-tab-content block">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Colonne Gauche : Formulaire de Publication -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            <div class="glass-panel p-6 md:p-8 rounded-3xl border border-brand/20 shadow-[0_0_30px_rgba(0,191,255,0.05)]">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="text-brand w-6 h-6"></i> Publier une nouvelle vidéo
+                </h2>
+                
+                <form id="upload-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Titre de la vidéo</label>
+                        <input type="text" id="vid-title" placeholder="Ex: Les Ombres du Futur" required class="bg-black/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Catégorie</label>
+                        <select id="vid-category" class="bg-black/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand outline-none appearance-none">
+                            <option>Action</option>
+                            <option>Drame</option>
+                            <option>Comédie</option>
+                            <option>Documentaire</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Description</label>
+                        <textarea id="vid-desc" placeholder="Décrivez votre contenu..." class="bg-black/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand outline-none h-24 resize-none"></textarea>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Prix (en CFA)</label>
+                        <input type="number" id="vid-price" step="1" placeholder="Ex: 2500" required class="bg-black/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Type de contenu</label>
+                        <div class="flex gap-4 py-2">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="vid-type" value="Série" class="accent-brand"> Série</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="vid-type" value="Court-métrage" class="accent-brand" checked> Court-métrage</label>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        <!-- Sélecteur Vidéo -->
+                        <input type="file" id="vid-file-input" class="hidden" accept="video/*">
+                        <div onclick="document.getElementById('vid-file-input').click()" class="border-2 border-dashed border-gray-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-brand/50 transition-colors cursor-pointer group relative overflow-hidden">
+                            <div id="video-preview-status" class="flex flex-col items-center gap-2">
+                                <i data-lucide="video" class="w-8 h-8 text-gray-600 group-hover:text-brand transition-colors"></i>
+                                <p class="text-xs font-bold text-gray-500">Sélectionner la Vidéo</p>
+                            </div>
+                        </div>
+
+                        <!-- Sélecteur Miniature -->
+                        <input type="file" id="thumb-file-input" class="hidden" accept="image/*" onchange="previewThumbnail(this)">
+                        <div onclick="document.getElementById('thumb-file-input').click()" class="border-2 border-dashed border-gray-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-brand/50 transition-colors cursor-pointer group relative overflow-hidden">
+                            <div id="thumb-placeholder" class="flex flex-col items-center gap-2">
+                                <i data-lucide="image" class="w-8 h-8 text-gray-600 group-hover:text-brand transition-colors"></i>
+                                <p class="text-xs font-bold text-gray-500">Ajouter Miniature</p>
+                            </div>
+                            <img id="thumb-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="md:col-span-2 bg-brand text-black font-extrabold py-4 rounded-xl shadow-[0_10px_30px_rgba(0,191,255,0.2)] hover:scale-[1.01] active:scale-100 transition-all mt-4">
+                        PUBLIER SUR LA PLATEFORME
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Colonne Droite : Stats et Liste Rapide -->
+        <div class="flex flex-col gap-6">
+            <!-- Statistiques -->
+            <div class="glass-panel p-6 rounded-3xl border border-white/5">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Performances</h3>
+                <div class="flex flex-col gap-6">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Ventes totales</span>
+                        <span id="total-revenue-stat" class="text-xl font-bold text-white">0 CFA</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Vidéos actives</span>
+                        <span id="active-videos-count" class="text-xl font-bold text-white">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Taux d'engagement</span>
+                        <span class="text-xl font-bold text-green-400">Stable</span>
+                    </div>
+
+                    <button onclick="resetAllData()" class="w-full mt-4 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs font-bold rounded-xl border border-red-500/20 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="refresh-ccw" class="w-4 h-4"></i> RÉINITIALISER LES DONNÉES
+                    </button>
+                </div>
+            </div>
+
+            <!-- Classement des Ventes -->
+            <div id="performance-section" class="glass-panel p-6 rounded-3xl border border-white/5 flex-1">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Performance des contenus</h3>
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand"></i>
+                </div>
+                
+                <div class="flex flex-col gap-4">
+                    <p class="text-center py-10 text-xs text-gray-600 italic">Aucune donnée de vente pour le moment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Gestion Globale (Séries & Courts-métrages) -->
+    <section class="mt-12 mb-20">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="text-2xl font-bold text-white">Gestion du Catalogue</h2>
+            <div class="h-[1px] flex-1 bg-white/10"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Colonne SÉRIES -->
+            <div class="glass-panel p-6 rounded-3xl border border-blue-500/10">
+                <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="layers" class="text-blue-400 w-5 h-5"></i> Séries TV
+                </h3>
+                <div id="series-list" class="flex flex-col gap-3">
+                    <p class="text-xs text-gray-600 italic">Aucune série publiée.</p>
+                </div>
+            </div>
+
+            <!-- Colonne COURTS-MÉTRAGES -->
+            <div class="glass-panel p-6 rounded-3xl border border-brand/10">
+                <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="film" class="text-brand w-5 h-5"></i> Courts-métrages
+                </h3>
+                <div id="shorts-list" class="flex flex-col gap-3">
+                    <p class="text-xs text-gray-600 italic">Aucun court-métrage publié.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        </div>
+    </div>
+
+    <!-- ONGLET 2 : GESTION DES UTILISATEURS -->
+    <div id="admin-users" class="admin-tab-content hidden">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-white/5">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="users" class="text-brand w-6 h-6"></i> Utilisateurs Inscrits
+                </h2>
+                <div id="user-count-badge" class="bg-brand/10 text-brand px-4 py-2 rounded-full text-xs font-bold">
+                    0 Utilisateurs Actifs
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-xs text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-4 font-bold">Utilisateur</th>
+                            <th class="pb-4 font-bold">Email</th>
+                            <th class="pb-4 font-bold">Pays</th>
+                            <th class="pb-4 font-bold">Date d'inscription</th>
+                            <th class="pb-4 font-bold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body" class="text-sm">
+                        <!-- Vide -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <p class="mt-8 text-center text-xs text-gray-600">Affichage de 3 sur 84 utilisateurs</p>
+        </div>
+    </div>
+
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        lucide.createIcons();
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-brand text-black border border-white/20 px-6 py-3 rounded-full shadow-2xl text-sm font-bold transform transition-all duration-300 translate-y-[20px] opacity-0 flex items-center gap-2';
+            toast.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> ${message}`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[20px]', 'opacity-0');
+            });
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Système d'onglets Admin
+        function switchAdminTab(tabId, btnElement) {
+            // Cacher tous les contenus
+            document.querySelectorAll('.admin-tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            
+            // Afficher l'onglet actif
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+            
+            // Style des boutons
+            document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brand', 'text-black');
+                btn.classList.add('bg-white/5', 'text-white');
+            });
+            
+            btnElement.classList.add('bg-brand', 'text-black');
+            btnElement.classList.remove('bg-white/5', 'text-white');
+        }
+
+        // --- Logique d'affichage dynamique ---
+        
+        function loadDashboardData() {
+            const videos = JSON.parse(localStorage.getItem('streamview_videos')) || [];
+            const users = JSON.parse(localStorage.getItem('streamview_all_users')) || [];
+            const sales = JSON.parse(localStorage.getItem('streamview_sales')) || {};
+            
+            const perfContainer = document.querySelector('#performance-section .flex-col');
+            const seriesList = document.getElementById('series-list');
+            const shortsList = document.getElementById('shorts-list');
+            const userTableBody = document.getElementById('user-table-body');
+            const userCountBadge = document.getElementById('user-count-badge');
+            
+            // Stats globales
+            const totalRevenueStat = document.getElementById('total-revenue-stat');
+            const activeVideosCount = document.getElementById('active-videos-count');
+
+            // 1. Gérer la section Performance et Stats globales
+            if (videos.length === 0) {
+                perfContainer.innerHTML = '<p class="text-center py-10 text-xs text-gray-600 italic">Aucune donnée de vente pour le moment.</p>';
+                totalRevenueStat.innerText = "0 CFA";
+                activeVideosCount.innerText = "0";
+            } else {
+                const sortedVideos = [...videos].sort((a, b) => (sales[b.id] || 0) - (sales[a.id] || 0));
+                perfContainer.innerHTML = '';
+                
+                let globalRevenue = 0;
+                
+                sortedVideos.forEach((vid, index) => {
+                    const salesCount = sales[vid.id] || 0;
+                    const totalRevenue = salesCount * parseInt(vid.price);
+                    globalRevenue += totalRevenue;
+                    
+                    const item = document.createElement('div');
+                    item.className = `flex items-center gap-4 p-3 ${index === 0 && salesCount > 0 ? 'bg-brand/5 border border-brand/20' : 'bg-white/5 border border-white/5'} rounded-2xl animate-fade-in`;
+                    item.innerHTML = `
+                        <div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 shadow-lg">
+                            <img src="${vid.thumb}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-bold text-white truncate">${vid.title}</p>
+                            <p class="text-[10px] ${index === 0 && salesCount > 0 ? 'text-brand' : 'text-gray-500'} font-black mt-1">#${index + 1} ${index === 0 && salesCount > 0 ? 'Top Ventes' : 'Performance'}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[13px] font-bold text-white">${salesCount} ventes</p>
+                            <p class="text-[11px] text-gray-400 mt-1">${totalRevenue.toLocaleString()} CFA</p>
+                        </div>
+                    `;
+                    perfContainer.appendChild(item);
+                });
+                
+                totalRevenueStat.innerText = `${globalRevenue.toLocaleString()} CFA`;
+                activeVideosCount.innerText = videos.length;
+            }
+
+            // 2. Gérer les Utilisateurs
+            userCountBadge.innerText = `${users.length} Utilisateur${users.length > 1 ? 's' : ''} Actif${users.length > 1 ? 's' : ''}`;
+            userTableBody.innerHTML = '';
+            
+            if (users.length === 0) {
+                userTableBody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-gray-600 italic">Aucun utilisateur inscrit pour le moment.</td></tr>';
+            } else {
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.className = "border-b border-white/5 hover:bg-white/5 transition-colors group";
+                    row.innerHTML = `
+                        <td class="py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xs">
+                                    ${user.name.charAt(0)}
+                                </div>
+                                <span class="font-bold text-white">${user.name}</span>
+                            </div>
+                        </td>
+                        <td class="py-4 text-gray-400">${user.email}</td>
+                        <td class="py-4"><span class="bg-brand/10 text-brand px-2 py-1 rounded text-[10px] font-bold">${user.country}</span></td>
+                        <td class="py-4 text-gray-400">${user.date}</td>
+                        <td class="py-4 text-right">
+                            <button onclick="showToast('Email envoyé à ${user.name}')" class="text-gray-500 hover:text-brand transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></button>
+                        </td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            }
+
+            // 3. Gérer la gestion du catalogue
+            seriesList.innerHTML = '';
+            shortsList.innerHTML = '';
+            const series = videos.filter(v => v.type === 'Série');
+            const shorts = videos.filter(v => v.type === 'Court-métrage');
+
+            if (series.length === 0) seriesList.innerHTML = '<p class="text-xs text-gray-600 italic">Aucune série publiée.</p>';
+            series.forEach(s => seriesList.appendChild(createCatalogItem(s)));
+
+            if (shorts.length === 0) shortsList.innerHTML = '<p class="text-xs text-gray-600 italic">Aucun court-métrage publié.</p>';
+            shorts.forEach(s => shortsList.appendChild(createCatalogItem(s)));
+        }
+
+        function createCatalogItem(vid) {
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-4 p-3 bg-white/5 rounded-xl border border-white/5 group";
+            div.innerHTML = `
+                <div class="w-12 h-12 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
+                    <img src="${vid.thumb}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-white truncate">${vid.title}</p>
+                    <p class="text-[10px] text-gray-500">${vid.price} CFA</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="deleteVideo(${vid.id})" class="p-2 bg-red-500/10 rounded-lg hover:bg-red-500/20 text-red-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+            `;
+            return div;
+        }
+
+        function deleteVideo(id) {
+            let videos = JSON.parse(localStorage.getItem('streamview_videos')) || [];
+            videos = videos.filter(v => v.id !== id);
+            localStorage.setItem('streamview_videos', JSON.stringify(videos));
+            showToast('Contenu supprimé');
+            loadDashboardData();
+            lucide.createIcons();
+        }
+
+        function resetAllData() {
+            if (confirm("Voulez-vous vraiment supprimer TOUTES les données (vidéos, utilisateurs, profil) ?")) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+
+        let currentThumbBase64 = null;
+
+        function previewThumbnail(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentThumbBase64 = e.target.result;
+                    const img = document.getElementById('thumb-preview-img');
+                    const placeholder = document.getElementById('thumb-placeholder');
+                    img.src = currentThumbBase64;
+                    img.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    showToast('Miniature ajoutée !');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        document.getElementById('vid-file-input').addEventListener('change', function(e) {
+            if(this.files && this.files[0]) {
+                const status = document.getElementById('video-preview-status');
+                status.querySelector('p').innerText = "Vidéo : " + this.files[0].name;
+                status.querySelector('i').classList.add('text-brand');
+                showToast('Vidéo prête à être publiée');
+            }
+        });
+
+        // --- Logique de Publication ---
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentThumbBase64) {
+                showToast('Veuillez ajouter une miniature !');
+                return;
+            }
+
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // État de chargement "Fluide"
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> PUBLICATION EN COURS...`;
+            lucide.createIcons();
+
+            setTimeout(() => {
+                const newVideo = {
+                    id: Date.now(),
+                    title: document.getElementById('vid-title').value,
+                    category: document.getElementById('vid-category').value,
+                    desc: document.getElementById('vid-desc').value,
+                    price: document.getElementById('vid-price').value,
+                    type: document.querySelector('input[name="vid-type"]:checked').value,
+                    thumb: currentThumbBase64,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                const videos = JSON.parse(localStorage.getItem('streamview_videos')) || [];
+                videos.push(newVideo);
+                localStorage.setItem('streamview_videos', JSON.stringify(videos));
+                
+                showToast('Vidéo publiée avec succès !');
+                
+                // Reset form et prévisualisation
+                this.reset();
+                currentThumbBase64 = null;
+                document.getElementById('thumb-preview-img').classList.add('hidden');
+                document.getElementById('thumb-placeholder').classList.remove('hidden');
+                document.getElementById('video-preview-status').querySelector('p').innerText = "Sélectionner la Vidéo";
+                document.getElementById('video-preview-status').querySelector('i').classList.remove('text-brand');
+                
+                // Restaurer le bouton
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                lucide.createIcons();
+
+                loadDashboardData();
+            }, 1500); // Délai de 1.5s pour la fluidité
+        });
+
+        // Charger au démarrage
+        window.onload = () => {
+            loadDashboardData();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>

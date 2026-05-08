@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - StreamView</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        body { 
+            background-color: #050505;
+            color: #FFFFFF; 
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+        .bg-cinematic {
+            background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+        }
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        brand: '#00BFFF',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="selection:bg-brand/30 relative min-h-screen w-screen flex items-center justify-center py-10">
+
+    <!-- Background Image with Overlay -->
+    <div class="fixed inset-0 bg-cinematic z-0"></div>
+    <div class="fixed inset-0 bg-gradient-to-b from-black/60 via-black/80 to-[#050505] z-0"></div>
+
+    <!-- Top Left Logo -->
+    <a href="index.html" class="absolute top-6 left-6 z-20 flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-blue-400 flex items-center justify-center shadow-[0_0_15px_rgba(0,191,255,0.4)]">
+            <i data-lucide="play" class="w-4 h-4 fill-white text-white ml-0.5"></i>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight text-white hidden sm:block">Stream<span class="text-brand">View</span></h1>
+    </a>
+
+    <!-- Signup Box -->
+    <div class="glass-panel w-full max-w-md mx-4 rounded-3xl p-8 z-10 relative">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold mb-2">Créer un compte</h2>
+            <p class="text-gray-400 text-sm">Rejoignez la communauté StreamView dès aujourd'hui.</p>
+        </div>
+
+        <form id="signup-form" class="flex flex-col gap-4">
+            <!-- Name Input -->
+            <div class="relative group">
+                <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
+                <input type="text" id="signup-name" placeholder="Nom complet" required
+                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+            </div>
+
+            <!-- Email Input -->
+            <div class="relative group">
+                <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
+                <input type="email" id="signup-email" placeholder="Adresse email" required
+                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+            </div>
+
+            <!-- Password Input -->
+            <div class="relative group">
+                <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
+                <input type="password" placeholder="Mot de passe" required
+                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+            </div>
+
+            <!-- Country Choice -->
+            <div class="relative group">
+                <i data-lucide="map-pin" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
+                <select id="country-select" required onchange="updateCurrencyHint(this.value)" class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30 appearance-none">
+                    <option value="" disabled selected>Choisir mon pays (Afrique de l'Ouest)</option>
+                    <option value="Bénin" data-currency="CFA">Bénin</option>
+                    <option value="Burkina Faso" data-currency="CFA">Burkina Faso</option>
+                    <option value="Cap-Vert" data-currency="CVE">Cap-Vert</option>
+                    <option value="Côte d'Ivoire" data-currency="CFA">Côte d'Ivoire</option>
+                    <option value="Gambie" data-currency="GMD">Gambie</option>
+                    <option value="Ghana" data-currency="GHS">Ghana</option>
+                    <option value="Guinée" data-currency="GNF">Guinée</option>
+                    <option value="Guinée-Bissau" data-currency="CFA">Guinée-Bissau</option>
+                    <option value="Libéria" data-currency="LRD">Libéria</option>
+                    <option value="Mali" data-currency="CFA">Mali</option>
+                    <option value="Niger" data-currency="CFA">Niger</option>
+                    <option value="Nigéria" data-currency="NGN">Nigéria</option>
+                    <option value="Sénégal" data-currency="CFA">Sénégal</option>
+                    <option value="Sierra Leone" data-currency="SLE">Sierra Leone</option>
+                    <option value="Togo" data-currency="CFA">Togo</option>
+                </select>
+                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"></i>
+            </div>
+            
+            <p id="currency-hint" class="text-[10px] text-brand font-bold uppercase tracking-widest px-2 -mt-2 transition-all opacity-0">
+                Devise détectée : <span id="detected-currency">CFA</span>
+            </p>
+
+            <!-- Terms -->
+            <div class="px-1">
+                <label class="flex items-start gap-2 cursor-pointer group">
+                    <input type="checkbox" required class="mt-1 w-4 h-4 rounded border-gray-600 text-brand focus:ring-brand accent-brand cursor-pointer">
+                    <span class="text-xs text-gray-400 group-hover:text-gray-300 transition-colors leading-relaxed">
+                        J'accepte les <a href="#" class="text-brand hover:underline">Conditions d'Utilisation</a>.
+                    </span>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-brand hover:bg-blue-400 text-black font-bold text-lg py-4 rounded-xl mt-2 transition-all transform hover:-translate-y-1 active:translate-y-0 shadow-[0_0_20px_rgba(0,191,255,0.3)]">
+                S'inscrire
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm text-gray-400">
+            Déjà un compte ? 
+            <a href="login.html" class="text-white font-bold hover:text-brand transition-colors ml-1">Se connecter</a>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Détection automatique du pays
+        async function detectLocation() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                
+                if (data.country_name) {
+                    const countrySelect = document.getElementById('country-select');
+                    // Chercher le pays dans les options
+                    for (let i = 0; i < countrySelect.options.length; i++) {
+                        if (countrySelect.options[i].value.toLowerCase().includes(data.country_name.toLowerCase()) || 
+                            countrySelect.options[i].text.toLowerCase().includes(data.country_name.toLowerCase())) {
+                            countrySelect.selectedIndex = i;
+                            updateCurrencyHint(countrySelect.options[i].value);
+                            break;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Erreur de détection de localisation:", error);
+            }
+        }
+        detectLocation();
+
+        function updateCurrencyHint(country) {
+            const hint = document.getElementById('currency-hint');
+            const currencySpan = document.getElementById('detected-currency');
+            const select = document.getElementById('country-select');
+            const currency = select.options[select.selectedIndex].getAttribute('data-currency');
+            
+            hint.classList.remove('opacity-0');
+            currencySpan.innerText = currency;
+        }
+
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userData = {
+                name: document.getElementById('signup-name').value,
+                email: document.getElementById('signup-email').value,
+                country: document.getElementById('country-select').value,
+                currency: document.getElementById('detected-currency').innerText,
+                isLoggedIn: true
+            };
+            
+            // Sauvegarde de la session actuelle
+            localStorage.setItem('streamview_user', JSON.stringify(userData));
+            
+            // Ajout à la liste globale des utilisateurs (pour l'admin)
+            const allUsers = JSON.parse(localStorage.getItem('streamview_all_users')) || [];
+            // Éviter les doublons par email
+            if (!allUsers.find(u => u.email === userData.email)) {
+                allUsers.push({
+                    ...userData,
+                    date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                });
+                localStorage.setItem('streamview_all_users', JSON.stringify(allUsers));
+            }
+            
+            // Redirection
+            window.location.href = 'preview.html';
+        });
+    </script>
+</body>
+</html>

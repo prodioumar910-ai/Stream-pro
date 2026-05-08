@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StreamView - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#c9c6c5",
+                        "on-primary-container": "#004a65",
+                        "surface-variant": "#333535",
+                        "on-secondary-fixed-variant": "#474646",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-secondary-container": "#b7b4b4",
+                        "tertiary": "#cfcdcc",
+                        "inverse-on-surface": "#2f3131",
+                        "secondary-container": "#474646",
+                        "on-error": "#690005",
+                        "on-tertiary": "#313030",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#00668a",
+                        "on-primary": "#003549",
+                        "error": "#ffb4ab",
+                        "on-surface": "#e2e2e2",
+                        "surface-container-lowest": "#0c0f0f",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "on-background": "#e2e2e2",
+                        "tertiary-container": "#b3b1b1",
+                        "background": "#121414",
+                        "outline": "#87929b",
+                        "inverse-surface": "#e2e2e2",
+                        "primary-fixed": "#c3e8ff",
+                        "on-primary-fixed": "#001e2c",
+                        "surface-tint": "#7ad0ff",
+                        "surface-container-high": "#282a2b",
+                        "surface-container-low": "#1a1c1c",
+                        "surface-container": "#1e2020",
+                        "on-tertiary-container": "#454444",
+                        "surface-container-highest": "#333535",
+                        "surface": "#121414",
+                        "secondary-fixed-dim": "#c9c6c5",
+                        "on-secondary": "#313030",
+                        "outline-variant": "#3d4850",
+                        "surface-dim": "#121414",
+                        "secondary-fixed": "#e5e2e1",
+                        "primary": "#8fd6ff",
+                        "on-surface-variant": "#bcc8d1",
+                        "primary-fixed-dim": "#7ad0ff",
+                        "primary-container": "#00bfff",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface-bright": "#38393a",
+                        "on-primary-fixed-variant": "#004c69",
+                        "tertiary-fixed": "#e5e2e1"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "gutter": "16px",
+                        "container-padding": "20px",
+                        "unit": "4px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px"
+                    },
+                    fontFamily: {
+                        "body-sm": ["Inter"],
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for shelves while keeping functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 15px 4px rgba(0, 191, 255, 0.6);
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .animate-fade-in-slide-up {
+            animation: fadeInSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-effect::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+            pointer-events: none;
+        }
+
+        .transition-modern {
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+    </style></head>
+<body class="bg-[#050505] text-on-background font-body-md text-body-md antialiased pb-32" data-mode="connect">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center h-16 px-5 bg-[#050505]/80 backdrop-blur-md border-b border-white/5 shadow-none transition-all">
+<button class="hover:opacity-80 transition-all active:scale-95 text-[#00BFFF]">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-['Plus_Jakarta_Sans'] font-semibold tracking-tight text-[#00BFFF] font-extrabold text-xl tracking-tighter">StreamView</span>
+<button class="hover:opacity-80 transition-all active:scale-95 w-8 h-8 rounded-full overflow-hidden border border-white/10">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A high quality portrait of a modern West African professional, subtly lit against a dark background, representing a user profile avatar in a premium digital streaming app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPcugz_asDt4utIz13QhuCmyF_gVFb0sItjpPsCF0vyPE-NA1_04HEK-NWDR70Zy7bGxh3S2IG9nskA7dKhN9GTY3bsQScoLF6L4C599qF4d_kbx7xX_9621-P3JImzT5yGjBravrzbd-R4PwNynfenGosUXAOf9HgkCXPHAkZoLb-nkCH_0f9E4K4fIRbIBCnZWlHeU9oAxZk-tNoVk3x617sVpsIgdoogqloH1pQVeaDPtc1eqHmZbd1QfOfR_4uHRjSeLmdJg"/>
+</button>
+</header>
+<!-- Hero Banner -->
+<!-- Content Sections -->
+<main class="flex flex-col gap-stack-lg mt-stack-md pt-16">
+<!-- Vidéos en tendances -->
+<section class="pl-container-padding">
+<h2 class="font-title-sm text-title-sm text-white mb-stack-sm pr-container-padding flex justify-between items-end">
+                Vidéos en tendances
+                <span class="material-symbols-outlined text-primary text-sm">arrow_forward_ios</span>
+</h2>
+<div class="flex overflow-x-auto gap-stack-md pr-container-padding snap-x pb-4 hide-scrollbar">
+<!-- Video Card 1 -->
+<div class="relative min-w-[160px] w-[160px] aspect-[2/3] rounded-[24px] overflow-hidden snap-start group cursor-pointer border border-white/5 shadow-lg animate-fade-in-slide-up shimmer-effect transition-modern" style="animation-delay: 0.1s">
+<img alt="Poster" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A striking portrait of a determined young woman in vibrant traditional attire, sharply illuminated against a dark, moody background. The high-contrast lighting and rich colors evoke a premium, cinematic drama set in West Africa." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6ZWa57Z09VlrlSOty7sXcAR2JGSoT_A-fBTAPJ4t9ab4NXgoOjV3iSYxR-DbQbFmnfYD3FnC4wHGm5hswHAJsZSylUk6YjDPv8bjmbih-l15qr1bw8eMbBU58sqGyxDv4U9Yz5-GaTUd8nqpk6QN7UJi9iQokZwBEJeIa9MFcv-RR22p2BF3_gBU8jJ3WGZMyIOB_qEJeqFMM1dV0Mu1zbYECvsPiWFZzdax-Cv-5YQKl3E-N9_K5uXdzm9hgWmAgyQY7vXvTag"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#050505]/90 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 w-full p-3 flex justify-between items-end">
+<span class="font-label-caps text-label-caps text-white line-clamp-1">L'Héritière</span>
+</div>
+</div>
+<!-- Video Card 2 -->
+<div class="relative min-w-[160px] w-[160px] aspect-[2/3] rounded-[24px] overflow-hidden snap-start group cursor-pointer border border-white/5 shadow-lg animate-fade-in-slide-up shimmer-effect transition-modern" style="animation-delay: 0.2s">
+<img alt="Poster" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Abstract glowing neon trails in a dark cityscape, creating a sense of high-speed motion and technological advancement. The palette is dominated by deep blacks and electric blues, fitting for a modern digital thriller aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzhn58nRUIo2FhaYANrP5NZm3P9IJScgxpZbP10-1uHZMDX9O1WcZhwxqV3rGa_Sj9ni0nHuxDL3-HHovz-Qn3bAXZBeFxmqqztFfa09ZryKNtNGhZ3HJepnwL19mjBs_1lMYjV26DNd3cf4Up1a3eUm_MqKcYujod1UosaURSR4MW8ZeGphE1UefHnqZDaGh7bMCKpL8RMbkmx5aYWFdF7GdC9xxdbUXDGkfoztXYcP1LYK7vdqKFzKOmYP6KZjKnhBr_jKx0WQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#050505]/90 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 w-full p-3 flex justify-between items-end">
+<span class="font-label-caps text-label-caps text-white line-clamp-1">Connecté</span>
+</div>
+</div>
+<!-- Video Card 3 -->
+<div class="relative min-w-[160px] w-[160px] aspect-[2/3] rounded-[24px] overflow-hidden snap-start group cursor-pointer border border-white/5 shadow-lg animate-fade-in-slide-up shimmer-effect transition-modern" style="animation-delay: 0.3s">
+<img alt="Poster" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A lush, dense rainforest canopy captured from above at dawn. The mist rolls over deep green foliage, lit by soft, cinematic morning light, suggesting an adventurous and visually rich documentary series." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzMyzQ1KCJFOS27ptntcWccnIGFc1z-XPhUYYEtpVRL2spvM9HyTOS8wgM3EjvVHeHVCBkQt8OO664WCFW-xpBjkiA3nP6ymvCbltQywmGl2ZimmhySUkFUAU2DHkIYQKiuz2b1lwnu3KQYIn80Z1AvCbiCEH4adZ481lyGsvosqPL1sjmbmtyKo2Yl22Elw-0i_LtbmeSEcJhUd6DniDsiY585chty-Vtoap2E5WMbSUd_qNd_qoGS1dBD4SDyo26VdohbDMidQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#050505]/90 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 w-full p-3 flex justify-between items-end">
+<span class="font-label-caps text-label-caps text-white line-clamp-1">Terres Sauvages</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Nouveautés (List Layout) -->
+<section class="px-container-padding">
+<h2 class="font-title-sm text-title-sm text-white mb-stack-sm flex justify-between items-end">Des nouveaux épisodes pour vous</h2>
+<div class="flex flex-col gap-3">
+<!-- Episode Card 1 -->
+<div class="flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-colors animate-fade-in-slide-up transition-modern shimmer-effect">
+<div class="relative w-[80px] h-[80px] shrink-0 rounded-[16px] overflow-hidden">
+<img alt="Episode Thumbnail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4DzgnsHWICWOaJOpTVzvoJtyl73QQ2TAXXGRfQ5o6VmRHY4YCRzhAJDM3nw9gJy61i7hpgAmTe7hOsK-TV2utrYtWAulS8ee62KdqoJmXke1I-cNsDS8P-Uo1yrcazIdN0ZnWfubC4KJkrB2LFBY7haQrHUteHZZ4BPpXy2gZHe3oFhIivGhpTyHq7tRhDUhwIxyKqEynBFYjuwlvi9-N-ZurfCYE-U0PoxK7wr19Q5D2fahA_ubOQIQ4w5e_jOSgoby9mQzzTw"/>
+</div>
+<div class="flex flex-col flex-1 justify-center">
+<h3 class="font-title-sm text-white text-base line-clamp-1">Épisode 1: Le Rythme</h3>
+<p class="text-[#00BFFF] font-bold text-sm mt-1">400 CFA</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-[#00BFFF]/10 text-[#00BFFF] mr-2 animate-pulse-glow">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<!-- Episode Card 2 -->
+<div class="flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-colors animate-fade-in-slide-up transition-modern shimmer-effect">
+<div class="relative w-[80px] h-[80px] shrink-0 rounded-[16px] overflow-hidden">
+<img alt="Episode Thumbnail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArE-Zi9JuCEKqtqtKLiwz1U-Km2abys1vxZ1xZ1HH2jQnZ65cRP6sOWYPy23h0u80y0493g5NxDkEbcZ0GduQII0IEwFNcZSxBfCshIbZZ0l7WZM1KWaSivlRgDOYMa7OhLJ7JkpcGKgfv-v_-TopaoTrmcQHFgXpTWNB5ROaaYomH33CJeS0Vp_n0iSbaOlzS8xE7ETBdtLE0CK5Rivy_HFGW4W0i3KcajDtR0Gvr4SZkOPnw_jjS5nKQ-fS-aduiAm-0QZNtmg"/>
+</div>
+<div class="flex flex-col flex-1 justify-center">
+<h3 class="font-title-sm text-white text-base line-clamp-1">Épisode 2: Le Désert</h3>
+<p class="text-[#00BFFF] font-bold text-sm mt-1">500 CFA</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-[#00BFFF]/10 text-[#00BFFF] mr-2 animate-pulse-glow">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<!-- Episode Card 3 -->
+<div class="flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-colors animate-fade-in-slide-up transition-modern shimmer-effect">
+<div class="relative w-[80px] h-[80px] shrink-0 rounded-[16px] overflow-hidden">
+<img alt="Episode Thumbnail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzhn58nRUIo2FhaYANrP5NZm3P9IJScgxpZbP10-1uHZMDX9O1WcZhwxqV3rGa_Sj9ni0nHuxDL3-HHovz-Qn3bAXZBeFxmqqztFfa09ZryKNtNGhZ3HJepnwL19mjBs_1lMYjV26DNd3cf4Up1a3eUm_MqKcYujod1UosaURSR4MW8ZeGphE1UefHnqZDaGh7bMCKpL8RMbkmx5aYWFdF7GdC9xxdbUXDGkfoztXYcP1LYK7vdqKFzKOmYP6KZjKnhBr_jKx0WQ"/>
+</div>
+<div class="flex flex-col flex-1 justify-center">
+<h3 class="font-title-sm text-white text-base line-clamp-1">Épisode 3: La Ville</h3>
+<p class="text-[#00BFFF] font-bold text-sm mt-1">400 CFA</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-[#00BFFF]/10 text-[#00BFFF] mr-2 animate-pulse-glow">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<!-- Episode Card 4 -->
+<div class="flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-colors animate-fade-in-slide-up transition-modern shimmer-effect">
+<div class="relative w-[80px] h-[80px] shrink-0 rounded-[16px] overflow-hidden">
+<img alt="Episode Thumbnail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6ZWa57Z09VlrlSOty7sXcAR2JGSoT_A-fBTAPJ4t9ab4NXgoOjV3iSYxR-DbQbFmnfYD3FnC4wHGm5hswHAJsZSylUk6YjDPv8bjmbih-l15qr1bw8eMbBU58sqGyxDv4U9Yz5-GaTUd8nqpk6QN7UJi9iQokZwBEJeIa9MFcv-RR22p2BF3_gBU8jJ3WGZMyIOB_qEJeqFMM1dV0Mu1zbYECvsPiWFZzdax-Cv-5YQKl3E-N9_K5uXdzm9hgWmAgyQY7vXvTag"/>
+</div>
+<div class="flex flex-col flex-1 justify-center">
+<h3 class="font-title-sm text-white text-base line-clamp-1">Épisode 4: La Tradition</h3>
+<p class="text-[#00BFFF] font-bold text-sm mt-1">500 CFA</p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-[#00BFFF]/10 text-[#00BFFF] mr-2 animate-pulse-glow">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-6 left-5 right-5 z-50 flex justify-around items-center h-20 px-4 bg-white/10 backdrop-blur-[32px] rounded-[24px] border border-white/10 shadow-[0_0_15px_rgba(0,191,255,0.2)] md:hidden">
+<!-- Home (Active) -->
+<button class="flex flex-col items-center justify-center text-[#00BFFF] drop-shadow-[0_0_8px_rgba(0,191,255,0.5)] active:scale-90 duration-200 ease-out hover:text-white/90 transition-colors w-16">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-medium uppercase tracking-widest mt-1">Home</span>
+</button>
+<!-- Browse -->
+<button class="flex flex-col items-center justify-center text-white/40 active:scale-90 duration-200 ease-out hover:text-white/90 transition-colors w-16">
+<span class="material-symbols-outlined">search</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-medium uppercase tracking-widest mt-1">Browse</span>
+</button>
+<!-- Downloads -->
+<button class="flex flex-col items-center justify-center text-white/40 active:scale-90 duration-200 ease-out hover:text-white/90 transition-colors w-16">
+<span class="material-symbols-outlined">download</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-medium uppercase tracking-widest mt-1">Downloads</span>
+</button>
+<!-- Profile -->
+<button class="flex flex-col items-center justify-center text-white/40 active:scale-90 duration-200 ease-out hover:text-white/90 transition-colors w-16">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
+</button>
+</nav>
+</body></html>
