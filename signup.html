@@ -79,14 +79,20 @@
             <div class="relative group">
                 <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
                 <input type="password" id="signup-password" placeholder="Mot de passe" required
-                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-12 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+                <button type="button" onclick="togglePass('signup-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-brand transition-colors">
+                    <i data-lucide="eye" class="w-5 h-5"></i>
+                </button>
             </div>
 
             <!-- Confirm Password Input -->
             <div class="relative group">
                 <i data-lucide="shield-check" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
                 <input type="password" id="signup-password-confirm" placeholder="Confirmer le mot de passe" required
-                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-12 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+                <button type="button" onclick="togglePass('signup-password-confirm', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-brand transition-colors">
+                    <i data-lucide="eye" class="w-5 h-5"></i>
+                </button>
             </div>
             
             <p id="password-error" class="text-red-500 text-[11px] font-bold px-2 -mt-2 hidden">
@@ -180,6 +186,39 @@
             currencySpan.innerText = currency;
         }
 
+        function togglePass(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        // Validation en temps réel
+        function checkPasswords() {
+            const pass = document.getElementById('signup-password');
+            const confirm = document.getElementById('signup-password-confirm');
+            const errorMsg = document.getElementById('password-error');
+
+            if (confirm.value.length > 0 && pass.value !== confirm.value) {
+                confirm.classList.add('ring-2', 'ring-red-500', 'border-red-500');
+                confirm.classList.remove('focus:ring-brand', 'border-gray-800');
+                errorMsg.classList.remove('hidden');
+            } else {
+                confirm.classList.remove('ring-2', 'ring-red-500', 'border-red-500');
+                confirm.classList.add('focus:ring-brand', 'border-gray-800');
+                errorMsg.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('signup-password').addEventListener('input', checkPasswords);
+        document.getElementById('signup-password-confirm').addEventListener('input', checkPasswords);
+
         document.getElementById('signup-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -190,8 +229,6 @@
             if (pass !== confirmPass) {
                 errorMsg.classList.remove('hidden');
                 return;
-            } else {
-                errorMsg.classList.add('hidden');
             }
             
             const userData = {
