@@ -486,10 +486,13 @@
                 if (filmsContainer) filmsContainer.innerHTML = '';
                 
                 customVideos.forEach((video, index) => {
+                    const clickAction = `onclick="openVideoPlayer('${video.playbackId}', '${video.title}')"`;
+                    
                     // 1. ÉPISODES DE TENDANCE (mt-3 pour écarter le prix)
                     if (episodesContainer && index < 4) {
                         const epEl = document.createElement('div');
                         epEl.className = "min-w-[280px] flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-all animate-stitch snap-start";
+                        epEl.setAttribute('onclick', `openVideoPlayer('${video.playbackId}', '${video.title}')`);
                         epEl.style.animationDelay = `${index * 0.1}s`;
                         epEl.innerHTML = `
                             <div class="relative w-[80px] h-[80px] shrink-0 rounded-[18px] overflow-hidden">
@@ -510,6 +513,7 @@
                     if (seriesContainer && index < 4) {
                         const seriesEl = document.createElement('div');
                         seriesEl.className = "relative min-w-[180px] aspect-[3/4] rounded-[24px] overflow-hidden snap-start group cursor-pointer border border-white/5 shadow-lg animate-stitch transition-all duration-500 hover:scale-105";
+                        seriesEl.setAttribute('onclick', `openVideoPlayer('${video.playbackId}', '${video.title}')`);
                         seriesEl.style.animationDelay = `${index * 0.15}s`;
                         seriesEl.innerHTML = `
                             <img src="${video.thumb}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
@@ -531,6 +535,7 @@
                     if (filmsContainer) {
                         const filmEl = document.createElement('div');
                         filmEl.className = "flex items-center gap-4 p-2 rounded-[24px] bg-white/5 border border-white/5 backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-all animate-stitch";
+                        filmEl.setAttribute('onclick', `openVideoPlayer('${video.playbackId}', '${video.title}')`);
                         filmEl.style.animationDelay = `${index * 0.2}s`;
                         filmEl.innerHTML = `
                             <div class="relative w-[80px] h-[80px] shrink-0 rounded-[18px] overflow-hidden">
@@ -742,6 +747,45 @@
             }
         })();
 
+        function openVideoPlayer(playbackId, title) {
+            const modal = document.getElementById('video-player-modal');
+            const iframe = document.getElementById('player-iframe');
+            const titleEl = document.getElementById('player-title');
+            
+            if (!playbackId || playbackId === 'N/A') {
+                showToast("Désolé, cette vidéo n'a pas d'ID de lecture valide.");
+                return;
+            }
+
+            // Utilisation du domaine universel de Cloudflare Stream (videodelivery.net)
+            iframe.src = `https://iframe.videodelivery.net/${playbackId}?autoplay=true&letterbox=true`;
+            titleEl.innerText = title;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            showToast(`Lecture de : ${title}`);
+        }
+
+        function closeVideoPlayer() {
+            const modal = document.getElementById('video-player-modal');
+            const iframe = document.getElementById('player-iframe');
+            iframe.src = ""; // Arrête la vidéo
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+    <!-- Video Player Modal -->
+    <div id="video-player-modal" class="fixed inset-0 z-[100] bg-black/95 hidden flex flex-col items-center justify-center p-4">
+        <button onclick="closeVideoPlayer()" class="absolute top-6 right-6 text-white bg-white/10 w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-all active:scale-90">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="w-full max-w-4xl aspect-video bg-black rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,191,255,0.2)] border border-white/10">
+            <iframe id="player-iframe" class="w-full h-full" src="" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true" style="border: none;"></iframe>
+        </div>
+        <h2 id="player-title" class="text-white font-bold mt-8 text-xl md:text-2xl tracking-tight text-center px-4">Titre de la vidéo</h2>
+    </div>
+
+    <script>
         lucide.createIcons();
     </script>
 </body>
