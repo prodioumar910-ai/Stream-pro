@@ -577,7 +577,7 @@
             loadAppData();
             const user = JSON.parse(localStorage.getItem('streamview_user'));
             const adminSection = document.getElementById('admin-only-section');
-            if(adminSection && user && user.email === 'prodioumar910@gmail.com') {
+            if(adminSection && user && user.email.toLowerCase() === 'prodimany@gmail.com') {
                 adminSection.classList.remove('hidden');
             }
         }, 100);
