@@ -78,9 +78,20 @@
             <!-- Password Input -->
             <div class="relative group">
                 <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
-                <input type="password" placeholder="Mot de passe" required
+                <input type="password" id="signup-password" placeholder="Mot de passe" required
                     class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
             </div>
+
+            <!-- Confirm Password Input -->
+            <div class="relative group">
+                <i data-lucide="shield-check" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-brand transition-colors"></i>
+                <input type="password" id="signup-password-confirm" placeholder="Confirmer le mot de passe" required
+                    class="w-full bg-[#1A1A1A]/80 text-white rounded-xl py-4 pl-12 pr-4 text-[15px] font-medium outline-none focus:ring-2 focus:ring-brand focus:bg-[#222] transition-all border border-gray-800 focus:border-brand/30">
+            </div>
+            
+            <p id="password-error" class="text-red-500 text-[11px] font-bold px-2 -mt-2 hidden">
+                Les mots de passe ne correspondent pas.
+            </p>
 
             <!-- Country Choice -->
             <div class="relative group">
@@ -171,6 +182,17 @@
 
         document.getElementById('signup-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const pass = document.getElementById('signup-password').value;
+            const confirmPass = document.getElementById('signup-password-confirm').value;
+            const errorMsg = document.getElementById('password-error');
+
+            if (pass !== confirmPass) {
+                errorMsg.classList.remove('hidden');
+                return;
+            } else {
+                errorMsg.classList.add('hidden');
+            }
             
             const userData = {
                 name: document.getElementById('signup-name').value,
