@@ -305,9 +305,24 @@
                     <input type="email" id="input-email" placeholder="votre@email.com" class="bg-card border border-gray-800 rounded-xl px-4 py-3 text-main focus:ring-2 focus:ring-brand outline-none transition-all">
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-grayText uppercase tracking-wider">Bio / Description</label>
-                    <textarea id="input-bio" placeholder="Parlez-nous de vous..." class="bg-card border border-gray-800 rounded-xl px-4 py-3 text-main focus:ring-2 focus:ring-brand outline-none transition-all h-24 resize-none"></textarea>
+                <!-- Stats Boxes -->
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <div class="bg-card border border-gray-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                        <span id="stat-purchases" class="text-brand font-bold text-lg">0</span>
+                        <span class="text-[9px] text-grayText uppercase font-bold mt-1 leading-tight">Nombre d'achat</span>
+                    </div>
+                    <div class="bg-card border border-gray-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                        <span id="stat-favorites" class="text-brand font-bold text-lg">0</span>
+                        <span class="text-[9px] text-grayText uppercase font-bold mt-1 leading-tight">Tes favoris</span>
+                    </div>
+                    <button onclick="showToast('Merci pour votre note ! ⭐')" class="bg-card border border-gray-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center hover:bg-brand/5 transition-colors">
+                        <div class="flex text-brand gap-0.5 mb-1">
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            <span class="material-symbols-outlined text-sm">star</span>
+                        </div>
+                        <span class="text-[9px] text-grayText uppercase font-bold mt-1 leading-tight">Donne une note</span>
+                    </button>
                 </div>
 
                 <button onclick="saveProfile()" class="w-full bg-brand text-black font-bold py-4 rounded-xl mt-4 shadow-[0_0_20px_rgba(0,191,255,0.3)] hover:scale-[1.02] active:scale-100 transition-all">
@@ -644,7 +659,16 @@
             const myList = JSON.parse(localStorage.getItem('streamview_mylist')) || [];
             const libContainer = document.querySelector('#tab-bibliotheque .flex-col.gap-4');
             
-            if (myList.length > 0) {
+            // Mise à jour des stats dans le profil
+            const purchaseCount = myList.filter(item => item.type === 'Achat').length;
+            const favoriteCount = myList.filter(item => item.type === 'Favori').length;
+            
+            const pStat = document.getElementById('stat-purchases');
+            const fStat = document.getElementById('stat-favorites');
+            if (pStat) pStat.innerText = purchaseCount;
+            if (fStat) fStat.innerText = favoriteCount;
+
+            if (libContainer) {
                 libContainer.innerHTML = '';
                 myList.forEach(item => {
                     const el = document.createElement('div');
