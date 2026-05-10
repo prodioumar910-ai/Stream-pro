@@ -105,13 +105,10 @@
                     </div>
 
                     <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                        <!-- Sélecteur Vidéo -->
-                        <input type="file" id="vid-file-input" class="hidden" accept="video/*">
-                        <div onclick="document.getElementById('vid-file-input').click()" class="border-2 border-dashed border-gray-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-brand/50 transition-colors cursor-pointer group relative overflow-hidden">
-                            <div id="video-preview-status" class="flex flex-col items-center gap-2">
-                                <i data-lucide="video" class="w-8 h-8 text-gray-600 group-hover:text-brand transition-colors"></i>
-                                <p class="text-xs font-bold text-gray-500">Sélectionner la Vidéo</p>
-                            </div>
+                        <!-- Playback ID Cloudflare -->
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Playback ID (Cloudflare)</label>
+                            <input type="text" id="vid-playback-id" placeholder="Ex: fc2022b... (ID Cloudflare)" required class="bg-black/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand outline-none h-[120px]">
                         </div>
 
                         <!-- Sélecteur Miniature -->
@@ -389,6 +386,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-bold text-white truncate">${vid.title}</p>
+                    <p class="text-[10px] text-brand uppercase font-bold tracking-tighter">ID: ${vid.playbackId || 'N/A'}</p>
                     <p class="text-[10px] text-gray-500">${vid.price} CFA</p>
                 </div>
                 <div class="flex gap-2">
@@ -432,14 +430,7 @@
             }
         }
 
-        document.getElementById('vid-file-input').addEventListener('change', function(e) {
-            if(this.files && this.files[0]) {
-                const status = document.getElementById('video-preview-status');
-                status.querySelector('p').innerText = "Vidéo : " + this.files[0].name;
-                status.querySelector('i').classList.add('text-brand');
-                showToast('Vidéo prête à être publiée');
-            }
-        });
+
 
         // --- Logique de Publication ---
         document.getElementById('upload-form').addEventListener('submit', function(e) {
@@ -466,6 +457,7 @@
                     desc: document.getElementById('vid-desc').value,
                     price: document.getElementById('vid-price').value,
                     type: document.querySelector('input[name="vid-type"]:checked').value,
+                    playbackId: document.getElementById('vid-playback-id').value,
                     thumb: currentThumbBase64,
                     date: new Date().toLocaleDateString()
                 };
@@ -481,8 +473,6 @@
                 currentThumbBase64 = null;
                 document.getElementById('thumb-preview-img').classList.add('hidden');
                 document.getElementById('thumb-placeholder').classList.remove('hidden');
-                document.getElementById('video-preview-status').querySelector('p').innerText = "Sélectionner la Vidéo";
-                document.getElementById('video-preview-status').querySelector('i').classList.remove('text-brand');
                 
                 // Restaurer le bouton
                 btn.disabled = false;
