@@ -321,9 +321,9 @@
                     </a>
                 </div>
 
-                <a href="index.html" class="w-full border border-red-500/30 text-red-500 font-bold py-4 rounded-xl mt-2 text-center hover:bg-red-500/5 transition-all">
+                <button onclick="logout()" class="w-full border border-red-500/30 text-red-500 font-bold py-4 rounded-xl mt-2 text-center hover:bg-red-500/5 transition-all">
                     Se déconnecter
-                </a>
+                </button>
             </div>
         </div>
     </div>
@@ -413,6 +413,12 @@
 
         function loadAppData() {
             const user = JSON.parse(localStorage.getItem('streamview_user'));
+            
+            // Barrière d'accès : rediriger si non connecté
+            if (!user || !user.isLoggedIn) {
+                window.location.href = 'signup.html';
+                return;
+            }
             
             // Mise à jour de la Région
             const regionText = document.getElementById('region-text');
@@ -577,6 +583,15 @@
         }, 100);
 
         // --- Fonctions de Modification de Profil ---
+
+        function logout() {
+            const user = JSON.parse(localStorage.getItem('streamview_user'));
+            if (user) {
+                user.isLoggedIn = false;
+                localStorage.setItem('streamview_user', JSON.stringify(user));
+            }
+            window.location.href = 'index.html';
+        }
 
         function saveProfile() {
             const newName = document.getElementById('input-full-name').value;
