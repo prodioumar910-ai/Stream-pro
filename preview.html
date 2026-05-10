@@ -464,6 +464,12 @@
                     document.getElementById('header-avatar-icon').classList.add('hidden');
                     currentAvatarData = user.avatar;
                 }
+
+                // Vérification Admin
+                const adminSection = document.getElementById('admin-only-section');
+                if(adminSection && user.email.toLowerCase() === 'prodimany@gmail.com') {
+                    adminSection.classList.remove('hidden');
+                }
             }
 
             const customVideos = JSON.parse(localStorage.getItem('streamview_videos')) || [];

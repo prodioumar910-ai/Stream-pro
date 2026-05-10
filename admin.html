@@ -32,7 +32,7 @@
         // Vérification de sécurité Admin
         (function() {
             const user = JSON.parse(localStorage.getItem('streamview_user'));
-            if (!user || user.email !== 'prodioumar910@gmail.com') {
+            if (!user || user.email.toLowerCase() !== 'prodimany@gmail.com') {
                 window.location.href = 'preview.html';
             }
         })();
